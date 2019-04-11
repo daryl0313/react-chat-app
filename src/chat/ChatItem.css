@@ -1,0 +1,17 @@
+.message-container {
+    display: inline-block;
+}
+
+.chat-meta {
+    color: grey;
+    margin-left: 15px;
+    border-radius: 20px;
+    font-size: 10px;
+}
+
+.chat-message {
+    color: white;
+    background-color: rgb(60, 64, 67);
+    border-radius: 20px;
+    padding: 15px;
+}

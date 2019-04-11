@@ -1,0 +1,48 @@
+:root {
+    --input-total-height: 75px;
+}
+
+.chat-shell {
+    position: relative;
+
+    background-color: #282c34;
+    height: 100%;
+    width: 100%;
+
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: darkslateblue lightslategrey;
+    max-height: calc(100vh - var(--input-total-height));
+
+    margin-bottom: var(--input-total-height)
+}
+
+.message-list > div {
+    padding-bottom: 15px;
+}
+
+.message-list > div:last-child{
+    padding-bottom: 0;
+}
+
+.chat-input {
+    padding-bottom: 10px;
+    height: 50px;
+}
+
+.message-list, .chat-input {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

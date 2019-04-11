@@ -1,0 +1,27 @@
+.chat-input-container {
+    display: flex;
+    align-items: center;
+
+    height: 100%;
+    width: 100%;
+}
+
+.new-chat-message {
+    border-style: solid;
+    width: 100%;
+}
+
+.btn-send-message {
+    margin-left: 15px;
+}
+
+.new-chat-message, .btn-send-message {
+    color: white;
+    background-color: rgb(60, 64, 67);
+    border-radius: 20px;
+    padding: 15px;
+}
+
+.new-chat-message:focus, .btn-send-message:focus {
+    outline: none;
+}
