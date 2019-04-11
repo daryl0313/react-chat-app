@@ -15,3 +15,16 @@
     border-radius: 20px;
     padding: 15px;
 }
+
+.message-container.right {
+    align-self: flex-end;
+    text-align: end;
+}
+
+.message-container.right > .chat-meta {
+    margin-left: 0;
+    margin-right: 15px;
+}
+.message-container.right > .chat-message {
+    background-color: darkcyan;
+}

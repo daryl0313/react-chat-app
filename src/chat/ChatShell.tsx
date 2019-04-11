@@ -1,55 +1,71 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import { Chat } from '../dtos/chat';
 import { ChatItem } from './ChatItem';
 import { ChatInput } from './ChatInput';
 
-import './ChatShell.css';
+import io from "socket.io-client";
 
-export class ChatShell extends React.PureComponent<{}, { messages: Chat[] }> {
-    state = {
-        messages: [
-            {
-                id: '1',
-                senderName: 'Derek',
-                message: 'Hi',
-                timestamp: new Date(2019, 3, 4, 14, 41, 23)
-            } as Chat,
-            {
-                id: '2',
-                senderName: 'Aaron',
-                message: 'Hi++',
-                timestamp: new Date(2019, 3, 4, 14, 41, 51)
-            } as Chat,
-            {
-                id: '3',
-                senderName: 'Chat Bot',
-                message: 'Lorem ipsum dolor sit amet, ius minim accusam delicata ex. Animal oblique feugait ad mei, erat iudico appareat ad eam, dicunt erroribus an eum. Vis constituto concludaturque ex, has doming corpora insolens an. Ius latine interesset eloquentiam ea. Eu admodum detracto complectitur duo.',
-                timestamp: new Date(2019, 3, 4, 14, 42, 15)
-            } as Chat,
-            {
-                id: '4',
-                senderName: 'Derek',
-                message: 'This is Sparta!!!',
-                timestamp: new Date(2019, 3, 4, 14, 42, 55)
-            } as Chat,
-            {
-                id: '5',
-                senderName: 'Chat Bot',
-                message: 'Id has audiam facilis scripserit, te nemore audire eum, sed ne latine tacimates evertitur. Eos an graece saperet expetenda, cu utinam verear omittantur vis. Ut mutat suscipiantur sed, id solum eligendi vim. Ad qui mediocrem consequuntur, id propriae prodesset est. Iuvaret scaevola no duo.',
-                timestamp: new Date(2019, 3, 4, 14, 45, 35)
-            } as Chat,
-        ]
+import './ChatShell.css';
+import { ChatEvents } from '../dtos/chatEvents';
+import { Username } from './Username';
+
+export class ChatShell extends React.PureComponent<{}, { name: string | null, messages: Chat[] }> {
+    constructor(props: any, context: any) {
+        super(props, context);
+        this.state = {
+            name: null,
+            messages: []
+        };
+        this.socket.on(ChatEvents.Login, (messages: Chat[]) => this.setState(ps => ({
+            ...ps,
+            messages: messages.map(this.mapChatMessage)
+        })));
+        this.socket.on(ChatEvents.NewMessage, (message: Chat) => this.setState(ps => ({
+            ...ps,
+            messages: [...this.state.messages, this.mapChatMessage(message)]
+        })));
+    }
+
+    socket = io('localhost:3500');
+    componentWillUnmount() {
+        this.socket.close();
+    }
+
+    mapChatMessage(chat: Chat): Chat {
+        return {
+            ...chat,
+            timestamp: new Date(chat.timestamp)
+        }
+    }
+
+    onUsernameEntered = (username: string) => {
+        this.socket.emit(ChatEvents.Connect, username);
+        this.setState(ps => ({ ...ps, name: username }));
+    };
+
+    onMessageEntered = (message: string | null) => {
+        this.socket.emit(ChatEvents.NewMessage, this.state.name, message);
     };
 
     render() {
+        let currentView: JSX.Element;
+        if (this.state.name) {
+            const messageList = this.state.messages.map(m => <ChatItem key={m.id} {...m} isSelf={m.senderName === this.state.name} />);
+            currentView =
+                <React.Fragment>
+                    <div className="message-list">
+                        {messageList}
+                    </div>
+                    <div className="chat-input">
+                        <ChatInput messageEntered={this.onMessageEntered} />
+                    </div>
+                </React.Fragment>;
+        } else {
+            currentView = <Username usernameEntered={this.onUsernameEntered} />
+        }
         return (
             <div className="chat-shell">
-                <div className="message-list">
-                    {this.state.messages.map(m => <ChatItem key={m.id} {...m} />)}
-                </div>
-                <div className="chat-input">
-                    <ChatInput />
-                </div>
+                {currentView}
             </div>
         );
     }
