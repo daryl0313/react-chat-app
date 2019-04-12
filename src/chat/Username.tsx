@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, FormEvent } from 'react';
 
 import './Username.css';
 
@@ -14,7 +14,10 @@ export class Username extends React.PureComponent<UsernameProps, { username: str
         })
     }
 
-    usernameEntered = () => this.props.usernameEntered(this.state.username)
+    usernameEntered = (e: FormEvent) => {
+        e.preventDefault();
+        this.props.usernameEntered(this.state.username);
+    }
 
 
     public render() {

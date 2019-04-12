@@ -8,6 +8,7 @@ import io from "socket.io-client";
 import './ChatShell.css';
 import { ChatEvents } from '../dtos/chatEvents';
 import { Username } from './Username';
+import ChatItemList from './ChatItemList';
 
 export class ChatShell extends React.PureComponent<{}, { name: string | null, messages: Chat[] }> {
     constructor(props: any, context: any) {
@@ -47,22 +48,13 @@ export class ChatShell extends React.PureComponent<{}, { name: string | null, me
         this.socket.emit(ChatEvents.NewMessage, this.state.name, message);
     };
 
+    getChatIsSelf = (c: Chat) => c.senderName === this.state.name;
+
     render() {
-        let currentView: JSX.Element;
-        if (this.state.name) {
-            const messageList = this.state.messages.map(m => <ChatItem key={m.id} {...m} isSelf={m.senderName === this.state.name} />);
-            currentView =
-                <React.Fragment>
-                    <div className="message-list">
-                        {messageList}
-                    </div>
-                    <div className="chat-input">
-                        <ChatInput messageEntered={this.onMessageEntered} />
-                    </div>
-                </React.Fragment>;
-        } else {
-            currentView = <Username usernameEntered={this.onUsernameEntered} />
-        }
+        const currentView = !!this.state.name
+            ? <ChatItemList messages={this.state.messages} getIsSelf={this.getChatIsSelf} onMessageEntered={this.onMessageEntered} />
+            : <Username usernameEntered={this.onUsernameEntered} />;
+
         return (
             <div className="chat-shell">
                 {currentView}
