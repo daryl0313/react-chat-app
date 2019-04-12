@@ -20,7 +20,7 @@ export default class ChatItemList extends React.PureComponent<IChatItemListProps
     }
 
     public render() {
-        const messageList = this.props.messages.map(m => <ChatItem key={m.id} {...m} isSelf={this.props.getIsSelf(m)} />);
+        const messageList = this.props.messages.map((m, i) => <ChatItem key={m.id} {...m} isSelf={this.props.getIsSelf(m)} scrollToView={i === (this.props.messages.length - 1)} />);
         return (
             <React.Fragment>
                 <div className="message-list">
