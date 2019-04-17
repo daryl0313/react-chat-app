@@ -2,12 +2,16 @@ import React, { ChangeEvent, FormEvent } from 'react';
 
 import './ChatInput.css';
 
-export interface ChatInputProps {
+export interface IChatInputProps {
     messageEntered: (message: string | null) => void
 }
 
-export class ChatInput extends React.PureComponent<ChatInputProps, { message: string | null }> {
-    constructor(props: ChatInputProps) {
+export interface IChatInputState {
+    message: string | null
+}
+
+export class ChatInput extends React.PureComponent<IChatInputProps, IChatInputState> {
+    constructor(props: IChatInputProps) {
         super(props);
         this.state = { message: null };
     }

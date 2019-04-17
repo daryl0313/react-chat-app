@@ -1,7 +1,5 @@
 import React, { RefObject } from 'react';
 import { Chat } from '../dtos/chat';
-import { ChatItem } from './ChatItem';
-import { ChatInput } from './ChatInput';
 
 import io from "socket.io-client";
 
@@ -10,13 +8,24 @@ import { ChatEvents } from '../dtos/chatEvents';
 import { Username } from './Username';
 import ChatItemList from './ChatItemList';
 
-export class ChatShell extends React.PureComponent<{}, { name: string | null, messages: Chat[] }> {
-    constructor(props: any, context: any) {
+export interface IChatShellProps { }
+export interface IChatShellState {
+    name: string | null, messages: Chat[]
+}
+
+export class ChatShell extends React.PureComponent<IChatShellProps, IChatShellState> {
+    constructor(props: IChatShellProps, context: IChatShellState) {
         super(props, context);
         this.state = {
             name: null,
             messages: []
         };
+    }
+
+    socket!: SocketIOClient.Socket;
+
+    componentWillMount() {
+        this.socket = io('localhost:3500');
         this.socket.on(ChatEvents.Login, (messages: Chat[]) => this.setState(ps => ({
             ...ps,
             messages: messages.map(this.mapChatMessage)
@@ -26,8 +35,6 @@ export class ChatShell extends React.PureComponent<{}, { name: string | null, me
             messages: [...this.state.messages, this.mapChatMessage(message)]
         })));
     }
-
-    socket = io('localhost:3500');
     componentWillUnmount() {
         this.socket.close();
     }
